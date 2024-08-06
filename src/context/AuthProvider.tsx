@@ -73,10 +73,7 @@ const AuthProvider = ({children} : AuthProviderProps) => {
                         error: true
                     };
                 }
-                
-                
-            }
-
+            }           
             setCargando(false);
         }   
         autenticarUsuario();

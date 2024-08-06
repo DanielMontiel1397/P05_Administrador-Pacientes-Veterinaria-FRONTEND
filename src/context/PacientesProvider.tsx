@@ -31,7 +31,6 @@ const PacientesProvider = ({children} : PacientesProviderProps) => {
     })
 
     const guardarPaciente = async (paciente : PacienteLista) => {
-        console.log(paciente);
         const token = localStorage.getItem('token');
         const config = {
             headers: {
@@ -100,7 +99,7 @@ const PacientesProvider = ({children} : PacientesProviderProps) => {
     }
 
     const eliminarPaciente = async (id : PacienteLista['_id']) =>{
-        const confirmar = confirm('¿Confirmas que deseas eliminar=');
+        const confirmar = confirm('¿Confirmas que deseas eliminar?');
         if(confirmar){
             try{
                 const token = localStorage.getItem('token');
