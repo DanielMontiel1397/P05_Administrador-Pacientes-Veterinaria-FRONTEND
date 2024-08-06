@@ -20,16 +20,18 @@ export default function ConfirmarCuenta() {
     
     useEffect(()=>{
       const confirmarCuenta = async () => {
-        
+        console.log('Hola');
         try{
           const url = `/veterinarios/confirmar/${id}`;
           const {data} = await clienteAxios.get(url);
+          console.log('Si entro');
           setCuentaConfirmada(true);
           setAlerta({
             msg: data.msg,
             error: false})
 
         } catch(error){
+          console.log('Hubo un error');
           if(axios.isAxiosError(error)){
             setAlerta({
                 msg: error.response?.data?.msg,
