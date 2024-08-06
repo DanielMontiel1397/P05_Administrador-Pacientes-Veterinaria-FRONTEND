@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { Veterinario, MensajeAlerta } from "../types"
 import Alerta from "../components/Alerta"
 import clienteAxios from "../config/axios"
+import axios from 'axios'
 
 export default function OlvidePassword() {
 
@@ -36,10 +37,14 @@ export default function OlvidePassword() {
         error: false
       })
     } catch(error){
-      setAlerta({
-        msg: error.response.data.msg,
-        error: true
-      })
+      if(axios.isAxiosError(error)){
+        setAlerta({
+          msg: error.response?.data?.msg,
+          error:true
+        })
+      } else {
+        console.log('Error desconocido al actualizar el perfil');
+      }
     }
 
   }

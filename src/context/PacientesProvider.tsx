@@ -1,10 +1,12 @@
 import { createContext, useState, ReactNode, Dispatch, useEffect } from "react";
 import clienteAxios from "../config/axios";
+import axios from 'axios'
 import type { PacienteLista } from "../types";
 
 type PacientesProviderProps = {
     children: ReactNode
 }
+
 type PacientesContextProps = {
     pacientes: PacienteLista[];
     setPacientes: Dispatch<React.SetStateAction<PacienteLista[]>>;
@@ -45,7 +47,11 @@ const PacientesProvider = ({children} : PacientesProviderProps) => {
                 const pacientesActualizado = pacientes.map(paciente => paciente._id === data._id ? data : paciente);
                 setPacientes(pacientesActualizado);
             } catch(error){
-                console.log(error.response.data.msg);
+                if(axios.isAxiosError(error)){
+                    console.log(error.response?.data?.msg);
+                } else {
+                    console.log('Error desconocido al actualizar el perfil');
+                }
             }
             return;
         }
@@ -73,7 +79,11 @@ const PacientesProvider = ({children} : PacientesProviderProps) => {
             setPacientes([...pacientes, pacienteAlmacenado]);
             
         } catch(error){
-            console.log(error.response.data.msg);
+            if(axios.isAxiosError(error)){
+                console.log(error.response?.data?.msg);
+            } else {
+                console.log('Error desconocido al actualizar el perfil');
+            }
         }
     }
 
@@ -105,7 +115,11 @@ const PacientesProvider = ({children} : PacientesProviderProps) => {
                 const pacientesActualizado = pacientes.filter(paciente => paciente._id !== id);
                 setPacientes(pacientesActualizado);
             } catch(error){
-                console.log(error.response.data.msg);
+                if(axios.isAxiosError(error)){
+                    console.log(error.response?.data?.msg);
+                } else {
+                    console.log('Error desconocido al actualizar el perfil');
+                }
             }
         }
     }
@@ -130,7 +144,11 @@ const PacientesProvider = ({children} : PacientesProviderProps) => {
                 const {data} = await clienteAxios.get('/pacientes', config);
                 setPacientes(data);
             } catch(error){
-                console.log(error.response.data.msg);
+                if(axios.isAxiosError(error)){
+                    console.log(error.response?.data?.msg);
+                } else {
+                    console.log('Error desconocido al actualizar el perfil');
+                }
             }
         }
         mostrarPacientes()

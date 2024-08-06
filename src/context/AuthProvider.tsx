@@ -1,5 +1,7 @@
 import { useState, useEffect, createContext, ReactNode, Dispatch } from "react";
 import clienteAxios from "../config/axios";
+import axios from 'axios';
+
 import { PerfilVeterinario, VeterinarioAuth, VeterinarioCambiarPassword } from "../types";
 
 
@@ -13,8 +15,8 @@ type AuthContextProps = {
     setAuth: Dispatch<React.SetStateAction<VeterinarioAuth>>;
     setCargando: Dispatch<React.SetStateAction<boolean>>;
     cerrarSesion: () => void;
-    actualizarPerfil: (perfil : PerfilVeterinario) => { msg: string, error: boolean;};
-    cambiarPassword: (password: VeterinarioCambiarPassword) => { msg: string, error: boolean;};
+    actualizarPerfil: (perfil : PerfilVeterinario) => Promise<{ msg: string, error: boolean;}> ;
+    cambiarPassword: (password: VeterinarioCambiarPassword) =>  Promise<{ msg: string, error: boolean;}>;
 };
 
 const AuthContext = createContext<AuthContextProps>(null!);
@@ -51,15 +53,28 @@ const AuthProvider = ({children} : AuthProviderProps) => {
                 setAuth(data.veterinario)
 
             } catch (error){
-                console.log(error.response.data.msg);
-                setAuth({
-                    nombre: '',
-                    email: '',
-                    telefono: '',
-                    web: '',
-                    _id: '',
-                    token: ''
-                })
+                if(axios.isAxiosError(error)){
+                    setAuth({
+                        nombre: '',
+                        email: '',
+                        telefono: '',
+                        web: '',
+                        _id: '',
+                        token: ''
+                    })
+                    return {
+                        msg: error.response?.data?.msg,
+                        error: true
+                    }
+                } else {
+                    // Manejar otros tipos de errores (opcional)
+                    return {
+                        msg: 'Error desconocido al actualizar el perfil',
+                        error: true
+                    };
+                }
+                
+                
             }
 
             setCargando(false);
@@ -79,13 +94,16 @@ const AuthProvider = ({children} : AuthProviderProps) => {
         })
     }
 
-    const actualizarPerfil = async (perfil : PerfilVeterinario) => {
+    const actualizarPerfil = async (perfil : PerfilVeterinario): Promise<{ msg: string, error: boolean }> => {
 
         const token = localStorage.getItem('token');
             
         if(!token){
             setCargando(false);
-            return;
+            return({
+                msg: 'Token no encontrado',
+                error: true
+            })
         }
 
         const config = {
@@ -103,20 +121,31 @@ const AuthProvider = ({children} : AuthProviderProps) => {
                 error: false
             }
         } catch(error){
-            return {
-                msg: error.response.data.msg,
-                error: true
+            if(axios.isAxiosError(error)){
+                return {
+                    msg: error.response?.data?.msg,
+                    error: true
+                }
+            } else {
+                // Manejar otros tipos de errores (opcional)
+                return {
+                    msg: 'Error desconocido al actualizar el perfil',
+                    error: true
+                };
             }
         }
 
     }
 
-    const cambiarPassword = async ( password : VeterinarioCambiarPassword) => {
+    const cambiarPassword = async ( password : VeterinarioCambiarPassword): Promise<{msg: string; error: boolean;}> => {
         const token = localStorage.getItem('token');
             
         if(!token){
             setCargando(false);
-            return;
+            return({
+                msg: 'Token no encontrado',
+                error: true
+            })
         }
 
         const config = {
@@ -135,10 +164,18 @@ const AuthProvider = ({children} : AuthProviderProps) => {
                 error: false
              })
         } catch(error){
-            return({
-                msg: error.response.data.msg,
-                error: true
-             })
+            if(axios.isAxiosError(error)){
+                return {
+                    msg: error.response?.data?.msg,
+                    error: true
+                }
+            } else {
+                // Manejar otros tipos de errores (opcional)
+                return {
+                    msg: 'Error desconocido al actualizar el perfil',
+                    error: true
+                };
+            }
         }
     }
 

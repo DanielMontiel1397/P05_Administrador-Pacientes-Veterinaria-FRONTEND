@@ -3,6 +3,7 @@ import { useParams, Link} from "react-router-dom";
 import { MensajeAlerta} from "../types"
 import Alerta from "../components/Alerta";
 import clienteAxios from "../config/axios";
+import axios from 'axios'
 
 type VeterinarioPassword = {
   password: string,
@@ -88,10 +89,14 @@ export default function NuevoPassword() {
         repetirPassword: ''
       })
     } catch(error){
-      setAlerta({
-        msg: error.response.data.msg,
-        error: true
-      })
+      if(axios.isAxiosError(error)){
+        setAlerta({
+          msg: error.response?.data?.msg,
+          error:true
+        })
+      } else {
+        console.log('Error desconocido al actualizar el perfil');
+      }
     }
 
   }

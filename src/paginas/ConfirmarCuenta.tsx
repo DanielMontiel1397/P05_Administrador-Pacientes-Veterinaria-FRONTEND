@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Alerta from "../components/Alerta";
 import { MensajeAlerta } from "../types";
 import clienteAxios from "../config/axios";
+import axios from 'axios'
 
 
 export default function ConfirmarCuenta() {
@@ -29,9 +30,14 @@ export default function ConfirmarCuenta() {
             error: false})
 
         } catch(error){
-          setAlerta({
-            msg: error.response.data.msg,
-            error: true})
+          if(axios.isAxiosError(error)){
+            setAlerta({
+                msg: error.response?.data?.msg,
+                error: true
+            })
+        } else {
+          console.log('Error desconocido al actualizar el perfil');
+        }
         }
 
         setCargando(false);
