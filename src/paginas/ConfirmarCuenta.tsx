@@ -24,7 +24,7 @@ export default function ConfirmarCuenta() {
         try{
           const url = `/veterinarios/confirmar/${id}`;
           const {data} = await clienteAxios.get(url);
-          console.log('Si entro');
+
           setCuentaConfirmada(true);
           setAlerta({
             msg: data.msg,
