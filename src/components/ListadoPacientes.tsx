@@ -14,7 +14,7 @@ export default function ListadoPacientes() {
             Listado Pacientes
           </h2>
 
-          <p className="text-xl mt-10 text-center mb-10">
+          <p className="text-xl my-3 text-center">
             Administra tus {''}
             <span className="text-indigo-600 font-bold">Pacientes y Citas</span>
           </p>

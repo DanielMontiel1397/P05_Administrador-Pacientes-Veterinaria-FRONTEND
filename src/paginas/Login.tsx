@@ -84,7 +84,7 @@ export default function Login() {
         </h1>
       </div>
 
-      <div className="mt-20 md:mt-5 shadow-lg px-5 py-10 rounded-xl bg-white">
+      <div className="mt-2 md:mt-0 shadow-lg px-5 py-10 rounded-xl bg-white">
         { msg && (
           <Alerta
             alerta={alerta}

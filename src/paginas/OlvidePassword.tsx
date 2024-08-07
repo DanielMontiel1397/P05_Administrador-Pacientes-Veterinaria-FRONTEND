@@ -28,6 +28,16 @@ export default function OlvidePassword() {
       return
     }
 
+    //Validar email
+    const regex =  /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/ 
+    if(!regex.test(email)){
+      setAlerta({
+        msg: 'El Email no es valido',
+        error: true
+      })
+      return;
+    }
+
     //Consultar la API
     try{
       const {data} = await clienteAxios.post('/veterinarios/olvide-password',{email});

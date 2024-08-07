@@ -39,20 +39,15 @@ export default function CambiarPassword() {
       return
     }
 
+    //Validar Password
     if(passwordPerfil.nuevoPassword.length < 6){
-      setAlerta({
-        msg: 'el password es muy corto',
-        error:true
-      })
-      return
+      setAlerta({msg: 'La Contraseña tiene que ser de al menos 6 carácteres', error: true})
+      return;
     }
-
+    
     if(passwordPerfil.nuevoPassword !== passwordPerfil.repetirNuevoPassword){
-      setAlerta({
-        msg: 'Los password no coinciden',
-        error:true
-      })
-      return
+      setAlerta({msg: 'Las contraseñas no son iguales', error: true})
+      return;
     }
 
     const resultado = await cambiarPassword({
@@ -76,8 +71,8 @@ export default function CambiarPassword() {
     <>
         <AdminNav/>
 
-        <h2 className="font-black text-3xl text-center mt-10">Cambiar Passsword</h2>
-        <p className="text-xl mt-5 mb-10 text-center">Modifica tú {''}
+        <h2 className="font-black text-3xl text-center mt-5">Cambiar Passsword</h2>
+        <p className="text-xl my-2 text-center">Modifica tú {''}
             <span className="text-indigo-600 font-bold">Password aquí.</span>
         </p>
 

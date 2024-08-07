@@ -34,15 +34,36 @@ export default function Registrar() {
         return 
       }
 
-      if(veterinario.password !== veterinario.repetirPassword){
-        setAlerta({msg: 'Los password no son iguales', error: true})
+      //Validar Nombre
+      if(!(/^[A-Za-z\s]+$/.test(veterinario.nombre))){
+        setAlerta({
+          msg: 'El Nombre tienen que ser sólo letras',
+          error: true
+        })
         return;
       }
 
-      if(veterinario.password.length < 6){
-        setAlerta({msg: 'El Password es muy corto', error: true})
+      //Validar email
+      const regex =  /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/ 
+      if(!regex.test(veterinario.email)){
+        setAlerta({
+          msg: 'El Email no es valido',
+          error: true
+        })
         return;
       }
+
+      //Validar Password
+      if(veterinario.password.length < 6){
+        setAlerta({msg: 'La Contraseña tiene que ser de al menos 6 carácteres', error: true})
+        return;
+      }
+      
+      if(veterinario.password !== veterinario.repetirPassword){
+        setAlerta({msg: 'Las contraseñas no son iguales', error: true})
+        return;
+      }
+
 
       //Crear el usuario en la API
       try{
@@ -75,10 +96,6 @@ export default function Registrar() {
           repetirPassword: ''
         })
       }
-
-
-      
-
       
     }
 
@@ -94,7 +111,7 @@ export default function Registrar() {
           </h1>
         </div>
 
-        <div className="mt-20 md:mt-5 shadow-lg px-5 py-10 rounded-xl bg-white">
+        <div className="mt-2 md:mt-0 shadow-lg px-5 py-10 rounded-xl bg-white">
 
           {msg &&
             <Alerta
@@ -110,7 +127,7 @@ export default function Registrar() {
               <input 
                 type="text" 
                 className="border w-full p-3 mt-3 bg-gray-50 rounded-xl" 
-                placeholder="tú Nombre"
+                placeholder="Tú Nombre"
                 name="nombre"
                 value={veterinario.nombre}
                 onChange={handleChange}

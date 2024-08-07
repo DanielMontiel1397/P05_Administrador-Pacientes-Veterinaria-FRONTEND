@@ -39,6 +39,7 @@ export default function EditarPerfil() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        
         const {nombre, email} = perfil;
         if([nombre, email].includes('')){
             setAlerta({
@@ -48,9 +49,44 @@ export default function EditarPerfil() {
             return;
         }
 
+        //Validar Nombre
+        if(!(/^[A-Za-z\s]+$/.test(perfil.nombre))){
+            setAlerta({
+            msg: 'El Nombre tienen que ser sólo letras',
+            error: true
+            })
+            return;
+        }
+
+        //Validar numero de telefono
+        if(!(/^[0-9]+$/.test(perfil.telefono))){
+            setAlerta({
+            msg: 'El Número tienen que ser sólo números',
+            error: true
+            })
+            return;
+        }
+
+        //Validar email
+        const regex =  /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/ 
+        if(!regex.test(perfil.email)){
+            setAlerta({
+            msg: 'El Email no es valido',
+            error: true
+            })
+            return;
+        }
+
         const resultado = await actualizarPerfil(perfil);
 
         setAlerta(resultado)
+
+        setTimeout(() => {
+            setAlerta({
+                msg:'',
+                error: true
+            })
+        }, 3000);
         
     }
 

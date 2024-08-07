@@ -55,11 +55,33 @@ export default function Formulario() {
             return
         }
 
-        //Setear Alerta
-        setAlerta({
-            msg: '',
-            error: false
-        })
+        //Validar Nombre Mascota
+        if(!(/^[A-Za-z\s]+$/.test(paciente.nombre))){
+            setAlerta({
+            msg: 'El Nombre de la mascota tienen que ser sólo letras',
+            error: true
+            })
+            return;
+        }
+        //Validar Nombre Propietario
+        if(!(/^[A-Za-z\s]+$/.test(paciente.propietario))){
+            setAlerta({
+            msg: 'El Nombre del propietario tienen que ser sólo letras',
+            error: true
+            })
+            return;
+        }
+
+        //Validar Email
+        //Validar email
+        const regex =  /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/ 
+        if(!regex.test(paciente.email)){
+            setAlerta({
+            msg: 'El Email no es valido',
+            error: true
+            })
+            return;
+        }
 
         //Crear Paciente
         guardarPaciente({...paciente, _id: id});
@@ -79,6 +101,13 @@ export default function Formulario() {
 
         setId('');
 
+        setTimeout(() => {
+            setAlerta({
+                msg:'',
+                error: true
+            })
+        }, 3000);
+
     }
 
     const {msg} = alerta;
@@ -89,7 +118,7 @@ export default function Formulario() {
             Administrador de Pacientes
           </h2>
 
-        <p className="text-xl mt-10 text-center mb-10">
+        <p className="text-xl my-3 text-center">
             Añade tus pacientes y {''}
             <span className="text-indigo-600 font-bold">Administralos</span>
           </p>
@@ -101,7 +130,7 @@ export default function Formulario() {
 
         <form 
             action="" 
-            className="bg-white py-10 px-5 mb-10 lg:mb-0 shadow-md rounded-md"
+            className="bg-white py-7 px-5 mb-10 lg:mb-0 shadow-md rounded-md"
             onSubmit={handleSubmit}>
             <div className="mb-5">
                 <label 

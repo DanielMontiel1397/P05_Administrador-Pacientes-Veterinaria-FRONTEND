@@ -1,11 +1,27 @@
 import { Link } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
+import { usePacientes } from "../hooks/usePacientes";
 
 
 
 export default function Header() {
 
     const {cerrarSesion} = useAuth();
+    const {setPacientes, setPaciente} = usePacientes();
+
+    const cerrarLaSesion = () =>{
+        setPacientes([]);
+        setPaciente({
+            nombre: '',
+            email: '',
+            _id: '',
+            fecha: '',
+            propietario: '',
+            sintomas: ''
+        });
+
+        cerrarSesion()
+    }
 
 return (
 
@@ -24,7 +40,7 @@ return (
                 <button
                     type="button"
                     className="text-white text-sm uppercase font-bold"
-                    onClick={cerrarSesion}
+                    onClick={()=>cerrarLaSesion()}
                 >Cerrar Sesion</button>
             </nav>
 

@@ -1,7 +1,6 @@
 import { useState, useEffect, createContext, ReactNode, Dispatch } from "react";
 import clienteAxios from "../config/axios";
 import axios from 'axios';
-
 import { PerfilVeterinario, VeterinarioAuth, VeterinarioCambiarPassword } from "../types";
 
 
@@ -22,6 +21,7 @@ type AuthContextProps = {
 const AuthContext = createContext<AuthContextProps>(null!);
 
 const AuthProvider = ({children} : AuthProviderProps) => {
+
 
     const [cargando, setCargando] = useState(true);
     const [auth,setAuth] = useState<VeterinarioAuth>({
@@ -113,6 +113,7 @@ const AuthProvider = ({children} : AuthProviderProps) => {
         try{
             const url = `/veterinarios/perfil/${perfil._id}`;
             const {data} = await clienteAxios.put(url,perfil,config);
+            setAuth(data)
             return {
                 msg: `Veterinario ${data.nombre} Actualizado Correctamente`,
                 error: false

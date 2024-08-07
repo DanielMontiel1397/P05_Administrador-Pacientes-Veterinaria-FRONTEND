@@ -2,6 +2,7 @@ import { createContext, useState, ReactNode, Dispatch, useEffect } from "react";
 import clienteAxios from "../config/axios";
 import axios from 'axios'
 import type { PacienteLista } from "../types";
+import { useAuth } from "../hooks/useAuth";
 
 type PacientesProviderProps = {
     children: ReactNode
@@ -10,6 +11,7 @@ type PacientesProviderProps = {
 type PacientesContextProps = {
     pacientes: PacienteLista[];
     setPacientes: Dispatch<React.SetStateAction<PacienteLista[]>>;
+    setPaciente: Dispatch<React.SetStateAction<PacienteLista>>
     guardarPaciente: (paciente : PacienteLista) => void;
     setEdicion: (paciente: PacienteLista) => void;
     eliminarPaciente: (id: PacienteLista['_id']) => void;
@@ -19,7 +21,7 @@ type PacientesContextProps = {
 const PacientesContext = createContext<PacientesContextProps>(null!);
 
 const PacientesProvider = ({children} : PacientesProviderProps) => {
-
+    const {auth} = useAuth()
     const [pacientes, setPacientes] = useState<PacienteLista[]>([]);
     const [paciente, setPaciente] = useState({
         nombre: '',
@@ -121,10 +123,21 @@ const PacientesProvider = ({children} : PacientesProviderProps) => {
                 }
             }
         }
+
+        //Vaciamos los campos de la edicion
+        setPaciente({
+            nombre: '',
+            email: '',
+            _id: '',
+            fecha: '',
+            propietario: '',
+            sintomas: ''
+        })
     }
 
     //Obtener pacientes para mostrarlos en pantalla
     useEffect(() => {
+
         const mostrarPacientes = async () => {
             const token = localStorage.getItem('token');
 
@@ -151,7 +164,7 @@ const PacientesProvider = ({children} : PacientesProviderProps) => {
             }
         }
         mostrarPacientes()
-    },[])
+    },[auth])
 
     return(
         <PacientesContext.Provider
@@ -161,7 +174,8 @@ const PacientesProvider = ({children} : PacientesProviderProps) => {
                 guardarPaciente,
                 setEdicion,
                 eliminarPaciente,
-                paciente
+                paciente,
+                setPaciente
             }}
         >
             {children}
