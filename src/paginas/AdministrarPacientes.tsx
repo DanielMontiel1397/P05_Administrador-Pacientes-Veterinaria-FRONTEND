@@ -7,7 +7,7 @@ export default function AdministrarPacientes() {
   const [mostrarFormulario,setMostrarFormulario] = useState(false)
 
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row gap-10">
         <button
           type="button"
           className="bg-indigo-600 text-white font-bold uppercase mx-10 p-3 rounded-md mb-10 md:hidden"

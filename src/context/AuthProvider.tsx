@@ -20,9 +20,10 @@ type AuthContextProps = {
 
 const AuthContext = createContext<AuthContextProps>(null!);
 
+
+
 const AuthProvider = ({children} : AuthProviderProps) => {
-
-
+    
     const [cargando, setCargando] = useState(true);
     const [auth,setAuth] = useState<VeterinarioAuth>({
         nombre: '',
@@ -136,6 +137,7 @@ const AuthProvider = ({children} : AuthProviderProps) => {
     }
 
     const cambiarPassword = async ( password : VeterinarioCambiarPassword): Promise<{msg: string; error: boolean;}> => {
+        
         const token = localStorage.getItem('token');
             
         if(!token){

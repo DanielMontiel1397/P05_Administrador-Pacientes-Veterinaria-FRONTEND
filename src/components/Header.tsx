@@ -34,12 +34,12 @@ return (
             </h1>
 
             <nav className="flex flex-col lg:flex-row mt-5 lg:mt-0 items-center gap-4 ">
-                <Link to="/admin" className="text-white text-sm uppercase font-bold">Pacientes</Link>
-                <Link to="/admin/perfil" className="text-white text-sm uppercase font-bold">Perfil</Link>
+                <Link to="/admin" className="text-white text-md uppercase font-bold">Pacientes</Link>
+                <Link to="/admin/perfil" className="text-white text-md uppercase font-bold">Perfil</Link>
 
                 <button
                     type="button"
-                    className="text-white text-sm uppercase font-bold"
+                    className="text-white text-md uppercase font-bold"
                     onClick={()=>cerrarLaSesion()}
                 >Cerrar Sesion</button>
             </nav>

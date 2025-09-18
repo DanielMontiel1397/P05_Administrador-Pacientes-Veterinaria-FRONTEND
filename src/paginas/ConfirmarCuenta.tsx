@@ -1,5 +1,5 @@
 
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Alerta from "../components/Alerta";
 import { MensajeAlerta } from "../types";
@@ -8,6 +8,9 @@ import axios from 'axios'
 
 
 export default function ConfirmarCuenta() {
+
+    const navigate = useNavigate();
+
     const [cuentaConfirmada,setCuentaConfirmada] = useState(false);
     const [cargando,setCargando] = useState(true);
     const [alerta, setAlerta] = useState<MensajeAlerta>({
@@ -29,6 +32,7 @@ export default function ConfirmarCuenta() {
           setAlerta({
             msg: data.msg,
             error: false})
+            navigate('/');
 
         } catch(error){
 
