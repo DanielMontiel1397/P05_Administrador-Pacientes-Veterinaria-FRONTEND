@@ -39,15 +39,19 @@ export default function Login() {
     }
 
     try{
-      const {data} = await clienteAxios.post('/veterinarios/login',{
+
+      const { data: {data}} = await clienteAxios.post('/veterinarios/login',{
         email: veterinario.email,
         password: veterinario.password
       });
+      console.log(data);
+
       localStorage.setItem('token',data.token)
       setVeterinario({
         email: '',
         password: ''
       })  
+      
       setAuth(data);
       navigate('/admin');
       

@@ -50,7 +50,8 @@ const AuthProvider = ({children} : AuthProviderProps) => {
                 }
             }
             try{
-                const {data} = await clienteAxios.get('/veterinarios/perfil', config);
+
+                const {data : {data}} = await clienteAxios.get('/veterinarios/perfil', config);
                 setAuth(data.veterinario)
 
             } catch (error){
@@ -113,7 +114,7 @@ const AuthProvider = ({children} : AuthProviderProps) => {
 
         try{
             const url = `/veterinarios/perfil/${perfil._id}`;
-            const {data} = await clienteAxios.put(url,perfil,config);
+            const {data : {data}} = await clienteAxios.put(url,perfil,config);
             setAuth(data)
             return {
                 msg: `Veterinario ${data.nombre} Actualizado Correctamente`,
@@ -157,7 +158,7 @@ const AuthProvider = ({children} : AuthProviderProps) => {
 
         try{
              const url = `/veterinarios/cambiar-password`;
-             const {data} = await clienteAxios.put(url, password, config);
+             const {data : {data}} = await clienteAxios.put(url, password, config);
 
              return({
                 msg: data.msg,
