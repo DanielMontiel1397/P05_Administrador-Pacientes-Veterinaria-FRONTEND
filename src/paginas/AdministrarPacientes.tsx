@@ -1,8 +1,17 @@
 import Formulario from "../components/Formulario";
 import ListadoPacientes from "../components/ListadoPacientes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAppStore } from "../stores/useAppStore";
+import Spinner from "../components/Spinner";
 
 export default function AdministrarPacientes() {
+
+  const pacientesStore = useAppStore(state => state.obtenerPacientes);
+  const loadingPacientes = useAppStore(state => state.loadingPacientes);
+
+  useEffect(() => {
+    pacientesStore()
+  }, [])
 
   const [mostrarFormulario,setMostrarFormulario] = useState(false)
 
@@ -21,7 +30,11 @@ export default function AdministrarPacientes() {
         </div>
 
         <div className="w-full md:w-1/2 lg:w-3/5">
-          <ListadoPacientes/>
+          {loadingPacientes ? (
+            <Spinner/>
+          ) : (
+            <ListadoPacientes/>
+          )}
         </div>
     </div>
   )

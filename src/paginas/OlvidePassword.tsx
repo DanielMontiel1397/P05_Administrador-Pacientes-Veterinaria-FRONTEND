@@ -1,18 +1,16 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { Veterinario, MensajeAlerta } from "../types"
+import { Veterinario } from "../types"
 import Alerta from "../components/Alerta"
-import clienteAxios from "../config/axios"
-import axios from 'axios'
+import { useAppStore } from "../stores/useAppStore"
 
 export default function OlvidePassword() {
 
-  const [email,setEmail] = useState<Veterinario['email']>('')
+  const alerta = useAppStore(state => state.alerta);
+  const mostrarAlerta = useAppStore(state => state.mostrarAlerta);
+  const olvidePassword = useAppStore(state => state.olvidePassword);
 
-  const [alerta, setAlerta] =useState<MensajeAlerta>({
-    msg: '',
-    error: false
-  });
+  const [email,setEmail] = useState<Veterinario['email']>('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -24,42 +22,25 @@ export default function OlvidePassword() {
     e.preventDefault();
 
     if(email === ''){
-      setAlerta({msg: 'El Email es Obligatorio', error: true})
+      mostrarAlerta({mensaje: 'El Email es Obligatorio', error: true})
       return
     }
 
     //Validar email
     const regex =  /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/ 
     if(!regex.test(email)){
-      setAlerta({
-        msg: 'El Email no es valido',
+      mostrarAlerta({
+        mensaje: 'El Email no es valido',
         error: true
       })
       return;
     }
 
-    //Consultar la API
-    try{
-      const {data} = await clienteAxios.post('/veterinarios/olvide-password',{email});
-
-      setAlerta({
-        msg: data.msg,
-        error: false
-      })
-    } catch(error){
-      if(axios.isAxiosError(error)){
-        setAlerta({
-          msg: error.response?.data?.msg,
-          error:true
-        })
-      } else {
-        console.log('Error desconocido al actualizar el perfil');
-      }
-    }
+    await olvidePassword(email);
 
   }
 
-  const {msg} = alerta;
+  const msg = alerta.mensaje;
 
   return (
     <>

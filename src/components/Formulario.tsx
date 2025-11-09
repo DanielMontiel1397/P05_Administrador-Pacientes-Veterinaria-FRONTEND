@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react"
-import { MensajeAlerta, Paciente } from "../types"
+import {  useState, useEffect } from "react"
+import { PacienteFormulario } from "../types"
 import Alerta from "./Alerta";
-import { usePacientes } from "../hooks/usePacientes";
+//import { usePacientes } from "../hooks/usePacientes";
+import { useAppStore } from "../stores/useAppStore";
 
 
 export default function Formulario() {
 
-    const [paciente,setPaciente] = useState<Paciente>({
+    const [paciente,setPaciente] = useState<PacienteFormulario>({
         nombre: '',
         propietario: '',
         email: '',
@@ -16,12 +17,14 @@ export default function Formulario() {
 
     const [id, setId] = useState('')
 
-    const [alerta, setAlerta] = useState<MensajeAlerta>({
-        msg: '',
-        error: false
-    })
+    const alerta = useAppStore(state => state.alerta);
+    const mostrarAlerta = useAppStore(state => state.mostrarAlerta);
+    const crearPaciente = useAppStore(state =>state.crearPaciente);
+    const pacienteEditar = useAppStore(state => state.pacienteEditar);
+    const editarPaciente = useAppStore(state => state.actualizarPaciente)
+    const limpiarPacienteEditar = useAppStore(state => state.limpiarPacienteEditar);
 
-    const {guardarPaciente, paciente: pacienteEditar } = usePacientes()
+    //const {guardarPaciente, paciente: pacienteEditar } = usePacientes()
 
     useEffect(() => {
         if(pacienteEditar?.nombre){
@@ -35,6 +38,7 @@ export default function Formulario() {
             setId(pacienteEditar._id)
         }
     }, [pacienteEditar])
+    
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
         setPaciente({
@@ -43,13 +47,13 @@ export default function Formulario() {
         })
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         
         //Comprobar campos
         if(Object.values(paciente).includes('')){
-            setAlerta({
-                msg: "Todos los campos son obligatorios",
+            mostrarAlerta({
+                mensaje: "Todos los campos son obligatorios",
                 error: true
             });
             return
@@ -57,60 +61,58 @@ export default function Formulario() {
 
         //Validar Nombre Mascota
         if(!(/^[A-Za-z\s]+$/.test(paciente.nombre))){
-            setAlerta({
-            msg: 'El Nombre de la mascota tienen que ser sólo letras',
+            mostrarAlerta({
+            mensaje: 'El Nombre de la mascota tienen que ser sólo letras',
             error: true
             })
             return;
         }
         //Validar Nombre Propietario
         if(!(/^[A-Za-z\s]+$/.test(paciente.propietario))){
-            setAlerta({
-            msg: 'El Nombre del propietario tienen que ser sólo letras',
+            mostrarAlerta({
+            mensaje: 'El Nombre del propietario tienen que ser sólo letras',
             error: true
             })
             return;
         }
 
-        //Validar Email
         //Validar email
         const regex =  /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/ 
         if(!regex.test(paciente.email)){
-            setAlerta({
-            msg: 'El Email no es valido',
+            mostrarAlerta({
+            mensaje: 'El Email no es valido',
             error: true
             })
             return;
         }
 
-        //Crear Paciente
-        guardarPaciente({...paciente, _id: id});
-        setAlerta({
-            msg: 'Guardado Correctamente',
-            error: false
-        })
+        //Si no tiene un id el Paciente entonces se quiere crear, caso contrario editar
 
-        //Resetear State
-        setPaciente({
-            nombre: '',
-            propietario: '',
-            email: '',
-            fecha: '',
-            sintomas: ''
-        });
-
-        setId('');
-
-        setTimeout(() => {
-            setAlerta({
-                msg:'',
-                error: true
-            })
-        }, 3000);
-
+        const exitoso = await (id ?
+            editarPaciente({
+                ...paciente,
+                _id: id
+            }) :
+            crearPaciente(paciente)
+        )
+   
+        if(exitoso){
+            //Resetear State
+            setPaciente({
+                nombre: '',
+                propietario: '',
+                email: '',
+                fecha: '',
+                sintomas: ''
+            });
+            
+            setId('');
+            limpiarPacienteEditar();
+        }
+        
     }
 
-    const {msg} = alerta;
+    const msg = alerta.mensaje;
 
   return (
     <>

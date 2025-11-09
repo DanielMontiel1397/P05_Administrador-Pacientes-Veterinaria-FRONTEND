@@ -1,5 +1,4 @@
 import { BrowserRouter,Routes,Route } from "react-router-dom";
-import AuthLayout from "./layout/AuthLayout";
 import RutaProtegida from "./layout/RutaProtegida";
 
 import Login from "./paginas/Login";
@@ -8,23 +7,28 @@ import OlvidePassword from "./paginas/OlvidePassword";
 import ConfirmarCuenta from "./paginas/ConfirmarCuenta";
 import NuevoPassword from "./paginas/NuevoPassword";
 
-import { AuthProvider } from "./context/AuthProvider";
-import { PacientesProvider } from "./context/PacientesProvider";
 import AdministrarPacientes from "./paginas/AdministrarPacientes";
 import EditarPerfil from "./paginas/EditarPerfil";
 import CambiarPassword from "./paginas/CambiarPassword";
+import { useAppStore } from "./stores/useAppStore";
+import { useEffect } from "react";
+import RutaPublica from "./layout/RutaPublica";
 
 function App() {
 
+  const checkAuth = useAppStore(state => state.obtenerPerfil);
+
+  useEffect(() => {
+    checkAuth();
+  }, [])
 
   return (
     <>
       <BrowserRouter>
-        <AuthProvider>
-          <PacientesProvider>
+
             <Routes>
 
-              <Route path="/" element={<AuthLayout/>}>
+              <Route path="/" element={<RutaPublica/>}>
                 <Route index element={<Login />} />
                 <Route path="registrar" element={<Registrar />} />
                 <Route path="olvide-password" element={<OlvidePassword />} />
@@ -39,8 +43,7 @@ function App() {
               </Route>
 
             </Routes>
-          </PacientesProvider>
-        </AuthProvider>
+
       </BrowserRouter>
     </>
   )

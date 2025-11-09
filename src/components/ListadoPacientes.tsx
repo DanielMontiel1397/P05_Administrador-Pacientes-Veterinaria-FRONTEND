@@ -1,10 +1,11 @@
-import { usePacientes } from "../hooks/usePacientes"
+
+import { useAppStore } from "../stores/useAppStore";
 import Paciente from "./Paciente";
 
 
 export default function ListadoPacientes() {
 
-  const {pacientes} = usePacientes();
+  const pacientes = useAppStore(state => state.pacientes)
 
   return (
     <>

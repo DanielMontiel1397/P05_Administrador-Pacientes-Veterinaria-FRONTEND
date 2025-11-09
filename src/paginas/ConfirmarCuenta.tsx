@@ -1,77 +1,62 @@
-
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Alerta from "../components/Alerta";
-import { MensajeAlerta } from "../types";
-import clienteAxios from "../config/axios";
-import axios from 'axios'
+import { useAppStore } from "../stores/useAppStore";
+import Spinner from "../components/Spinner";
 
 
 export default function ConfirmarCuenta() {
+  const alerta = useAppStore(state => state.alerta);
+  const confirmarCuenta = useAppStore(state => state.confirmarCuenta);
+  const cargando = useAppStore(state => state.loading);
 
-    const navigate = useNavigate();
+  const [cuentaConfirmada, setCuentaConfirmada] = useState(false);
 
-    const [cuentaConfirmada,setCuentaConfirmada] = useState(false);
-    const [cargando,setCargando] = useState(true);
-    const [alerta, setAlerta] = useState<MensajeAlerta>({
-      msg: '',
-      error: false
-    })
+  const params = useParams();
+  const { id } = params;
 
-    const params = useParams();
-    const {id} = params;
-    
-    useEffect(()=>{
-      const confirmarCuenta = async () => {
+  useEffect(() => {
+    const confirmar = async () => {
+      const resultado = await confirmarCuenta(id);
+      setCuentaConfirmada(resultado);
+    }
+    confirmar()
+  }, [])
 
-        try{
-          const url = `/veterinarios/confirmar/${id}`;
-          const {data} = await clienteAxios.get(url);
+  const msg = alerta.mensaje;
 
-          setCuentaConfirmada(true);
-          setAlerta({
-            msg: data.msg,
-            error: false})
-            navigate('/');
+  return (
+    <>
+      <div>
+        <h1 className="text-indigo-600 font-black text-6xl">
+          Confirma tú Cuenta y Comienza a Administrar {''}
+          <span className="text-black"> Pacientes
+          </span>
+        </h1>
+      </div>
 
-        } catch(error){
+      <div className="mt-20 md:mt-5 shadow-lg px-5 py-10 rounded-xl bg-white">
 
-          if(axios.isAxiosError(error)){
-            setAlerta({
-                msg: error.response?.data?.msg,
-                error: true
-            })
-        } else {
-          console.log('Error desconocido al actualizar el perfil');
+        {!cargando ?
+          (<>
+            {
+              msg && <Alerta
+                alerta={alerta}
+              />
+            }
+            <Link className="block text-lg text-center my-5 text-gray-500 hover:text-gray-600" to="/">
+              Regresar a página principal
+            </Link>
+          </>
+          ) :
+          (<Spinner />)
         }
+
+        {cuentaConfirmada &&
+          <Link className="block text-center my-5 text-gray-500 hover:text-gray-600" to="/">Iniciar Sesión</Link>
         }
 
-        setCargando(false);
-      }
-      confirmarCuenta();
-    },[])
-
-    return (
-      <>
-        <div>
-          <h1 className="text-indigo-600 font-black text-6xl">
-            Confirma tú Cuenta y Comienza a Administrar {''}
-              <span className="text-black"> Pacientes
-              </span>
-          </h1>
-        </div>
-
-        <div className="mt-20 md:mt-5 shadow-lg px-5 py-10 rounded-xl bg-white">
-          
-          {!cargando && 
-            <Alerta
-              alerta={alerta}
-            />
-          }
-
-          {cuentaConfirmada && 
-            <Link className="block text-center my-5 text-gray-500" to="/">Iniciar Sesión</Link>}
-        </div>
-      </>
-    )
-  }
+      </div>
+    </>
+  )
+}

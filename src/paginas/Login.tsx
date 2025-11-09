@@ -1,18 +1,16 @@
 import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../hooks/useAuth"
 import { useState } from "react";
-import { MensajeAlerta, VeterinarioLogin } from "../types";
+import { VeterinarioLogin } from "../types";
 import Alerta from "../components/Alerta";
-import clienteAxios from "../config/axios";
-import axios from 'axios'
+import { useAppStore } from "../stores/useAppStore";
 
 export default function Login() {
 
-  const {setAuth} = useAuth();
-  const [alerta,setAlerta] = useState<MensajeAlerta>({
-    msg: '',
-    error: false
-  })
+  //Store Alerta
+  const alerta = useAppStore(state => state.alerta);
+  const mostrarAlerta = useAppStore(state => state.mostrarAlerta);
+  const loginVeterinario = useAppStore(state => state.loginVeterinario);
+
 
   const [veterinario,setVeterinario] = useState<VeterinarioLogin>({
     email: '',
@@ -29,53 +27,40 @@ export default function Login() {
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
+
     if(Object.values(veterinario).includes('')){
-      setAlerta({
-        msg: 'Los Campos están vacios',
+      mostrarAlerta({
+        mensaje: 'Los Campos están vacios',
         error: true
       })
       return;
     }
 
-    try{
+    //Validar email
+    const regex = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
+    if (!regex.test(veterinario.email)) {
+      mostrarAlerta({
+        mensaje: 'El Email no es valido',
+        error: true
+      })
+      return;
+    }
 
-      const { data: {data}} = await clienteAxios.post('/veterinarios/login',{
-        email: veterinario.email,
-        password: veterinario.password
-      });
-      console.log(data);
-
-      localStorage.setItem('token',data.token)
-      setVeterinario({
-        email: '',
-        password: ''
-      })  
-      
-      setAuth(data);
-      navigate('/admin');
-      
-    } catch(error){
-        if(axios.isAxiosError(error)){
-            setAlerta({
-              msg: error.response?.data?.msg,
-              error:true
-            })
-        } else {
-          console.log('Error desconocido al actualizar el perfil');
-        }
-      
-
-      setVeterinario({
+    const respuesta = await loginVeterinario(veterinario);
+    
+    if(respuesta){
+      return navigate('/admin')
+    } else {
+      return setVeterinario({
         ...veterinario,
         password: ''
       })
     }
 
-
   }
 
-  const {msg} = alerta;
 
   return (
     <>
@@ -88,7 +73,7 @@ export default function Login() {
       </div>
 
       <div className="mt-2 md:mt-0 shadow-lg px-5 py-10 rounded-xl bg-white">
-        { msg && (
+        { alerta.mensaje && (
           <Alerta
             alerta={alerta}
           />
@@ -114,6 +99,7 @@ export default function Login() {
               className="border w-full p-3 mt-3 bg-gray-50 rounded-xl" 
               placeholder="Tú password"
               name="password"
+              value={veterinario.password}
               onChange={handleChange}/>
           </div>
 

@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react"
-import { useParams, Link} from "react-router-dom";
-import { MensajeAlerta} from "../types"
+import { useParams, Link, useNavigate} from "react-router-dom";
 import Alerta from "../components/Alerta";
-import clienteAxios from "../config/axios";
-import axios from 'axios'
+import { useAppStore } from "../stores/useAppStore";
 
 type VeterinarioPassword = {
   password: string,
@@ -11,6 +9,8 @@ type VeterinarioPassword = {
 }
 
 export default function NuevoPassword() {
+
+  const navigate = useNavigate();
   const params = useParams();
   const {token} = params;
 
@@ -19,35 +19,26 @@ export default function NuevoPassword() {
     repetirPassword: ''
   });
 
-  const [alerta, setAlerta] =useState<MensajeAlerta>({
-    msg: '',
-    error: false
-  });
+  const alerta = useAppStore(state => state.alerta);
+  const mostrarAlerta = useAppStore(state =>state.mostrarAlerta);
+  const comprobarToken = useAppStore(state => state.comprobarToken);
+  const nuevoPassword = useAppStore(state => state.nuevoPassword);
 
   const [tokenValido,setTokenValido] = useState(false)
   const [passwordModificado,setPasswordModificado] =useState(false);
 
   useEffect(()=>{
-    const comprobarToken = async () => {
-
-      try{
-
-        await clienteAxios.get(`/veterinarios/olvide-password/${token}`);
-        setAlerta({
-          msg: 'Coloca tú Nuevo Password',
-          error: false
-        })
-        setTokenValido(true);
-
-      } catch(error){
-        setAlerta({
-          msg: 'Hubo un Error con el enlace',
-          error: true
-        })
-      }
+    
+    const ejecutarFuncionComprobarToken = async () => {
+      
+      const respuestaToken = await comprobarToken(token);
+      setTokenValido(respuestaToken);
 
     }
-    comprobarToken();
+      
+     
+     ejecutarFuncionComprobarToken()
+    
   },[])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,48 +51,38 @@ export default function NuevoPassword() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(Object.values(password).includes('')){
-      setAlerta({msg: 'Hay Campos vacios', error: true})
+      mostrarAlerta({mensaje: 'Hay Campos vacios', error: true})
       return 
     }
 
     if(password.password.length < 6){
-      setAlerta({msg: 'El Password es muy corto', error: true})
+      mostrarAlerta({mensaje: 'El Password es muy corto', error: true})
       return;
     }
 
     if(password.password !== password.repetirPassword){
-      setAlerta({msg: 'Los password no son iguales', error: true});
+      mostrarAlerta({mensaje: 'Los password no son iguales', error: true});
       return;
     }
     
-    try{
-      const url = `/veterinarios/olvide-password/${token}`
-      const {data} = await clienteAxios.post(url,{password: password.password});
-      setAlerta({
-        msg: data.msg,
-        error: false
-      })
-      setPasswordModificado(true)
+    const respuesta = await nuevoPassword({
+      token: token,
+      password: password.password
+    })
 
+    if(respuesta){
+      setPasswordModificado(true)
       //Reiniciar State
       setPassword({
         password: '',
         repetirPassword: ''
       })
-    } catch(error){
-      if(axios.isAxiosError(error)){
-        setAlerta({
-          msg: error.response?.data?.msg,
-          error:true
-        })
-      } else {
-        console.log('Error desconocido al actualizar el perfil');
-      }
+      navigate('/');
     }
 
   }
 
-  const {msg} = alerta;
+  const msg = alerta.mensaje;
 
   return (
     <>

@@ -1,27 +1,18 @@
-import { Link } from "react-router-dom"
-import { useAuth } from "../hooks/useAuth"
-import { usePacientes } from "../hooks/usePacientes";
-
-
+import { Link, useNavigate } from "react-router-dom"
+//import { useAuth } from "../hooks/useAuth"
+import { useAppStore } from "../stores/useAppStore";
 
 export default function Header() {
+    const navigate = useNavigate()
+    const cerrarSesion = useAppStore(state => state.cerrarSesion);
+    const limpiarPacientes = useAppStore(state =>state.limpiarPacientes);
 
-    const {cerrarSesion} = useAuth();
-    const {setPacientes, setPaciente} = usePacientes();
-
-    const cerrarLaSesion = () =>{
-        setPacientes([]);
-        setPaciente({
-            nombre: '',
-            email: '',
-            _id: '',
-            fecha: '',
-            propietario: '',
-            sintomas: ''
-        });
-
-        cerrarSesion()
+    const cerrarLaSesion = () => {
+        limpiarPacientes();
+        cerrarSesion();
+        navigate('/')
     }
+
 
 return (
 

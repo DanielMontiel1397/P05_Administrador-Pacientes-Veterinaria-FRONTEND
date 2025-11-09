@@ -1,18 +1,19 @@
 import { useState } from "react";
 import AdminNav from "../components/AdminNav";
 import Alerta from "../components/Alerta";
-import { MensajeAlerta } from "../types";
-import { useAuth } from "../hooks/useAuth";
+
+
+import { useAppStore } from "../stores/useAppStore";
 
 
 export default function CambiarPassword() {
 
-  const [alerta,setAlerta] = useState<MensajeAlerta>({
-    msg: '',
-    error: false
-  });
+  const alerta = useAppStore(state => state.alerta);
+  const mostrarAlerta = useAppStore(state =>state.mostrarAlerta)
+  
+  const cambiarPassword = useAppStore(state =>state.cambiarPassword);
 
-  const {cambiarPassword} = useAuth();
+  //const {cambiarPassword} = useAuth();
 
   const [passwordPerfil,setPasswordPerfil] = useState({
     passwordActual: '',
@@ -32,8 +33,8 @@ export default function CambiarPassword() {
     e.preventDefault();
     
     if(Object.values(passwordPerfil).includes('')){
-      setAlerta({
-        msg: 'Todos los campos son obligatorios',
+      mostrarAlerta({
+        mensaje: 'Todos los campos son obligatorios',
         error: true
       })
       return
@@ -41,31 +42,31 @@ export default function CambiarPassword() {
 
     //Validar Password
     if(passwordPerfil.nuevoPassword.length < 6){
-      setAlerta({msg: 'La Contraseña tiene que ser de al menos 6 carácteres', error: true})
+      mostrarAlerta({mensaje: 'La Contraseña tiene que ser de al menos 6 carácteres', error: true})
       return;
     }
     
     if(passwordPerfil.nuevoPassword !== passwordPerfil.repetirNuevoPassword){
-      setAlerta({msg: 'Las contraseñas no son iguales', error: true})
+      mostrarAlerta({mensaje: 'Las contraseñas no son iguales', error: true})
       return;
     }
 
-    const resultado = await cambiarPassword({
+   
+    await cambiarPassword({
       passwordActual: passwordPerfil.passwordActual,
       nuevoPassword: passwordPerfil.nuevoPassword
     })
-
-    setAlerta(resultado)
-
+    
     setPasswordPerfil({
       passwordActual: '',
       nuevoPassword: '',
       repetirNuevoPassword: ''
     })
+  
   }
 
 
-  const {msg} = alerta;
+  const msg = alerta.mensaje;
 
   return (
     <>
