@@ -1,4 +1,4 @@
-import { BrowserRouter,Routes,Route } from "react-router-dom";
+import { Routes,Route, useLocation } from "react-router-dom";
 import RutaProtegida from "./layout/RutaProtegida";
 
 import Login from "./paginas/Login";
@@ -17,14 +17,20 @@ import RutaPublica from "./layout/RutaPublica";
 function App() {
 
   const checkAuth = useAppStore(state => state.obtenerPerfil);
+  const cerrarAlerta = useAppStore(state => state.cerrarAlerta);
 
   useEffect(() => {
     checkAuth();
   }, [])
 
+  const locacion = useLocation()
+  useEffect(() => {
+    cerrarAlerta()
+  }, [locacion.pathname])
+
   return (
     <>
-      <BrowserRouter>
+      
 
             <Routes>
 
@@ -44,7 +50,7 @@ function App() {
 
             </Routes>
 
-      </BrowserRouter>
+      
     </>
   )
 }

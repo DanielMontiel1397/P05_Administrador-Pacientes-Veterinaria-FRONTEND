@@ -5,6 +5,7 @@ import { AuthSliceType } from "./authSlice"
 export type AlertaFormularioSliceType = {
     alerta: Alerta
     mostrarAlerta: (payload: Pick<Alerta, 'mensaje' | 'error'>) => void
+    cerrarAlerta: () => void
 }
 
 export const alertaFormularioSlice : StateCreator<AlertaFormularioSliceType & AuthSliceType, [], [], AlertaFormularioSliceType> = (set) => ({
@@ -20,16 +21,15 @@ export const alertaFormularioSlice : StateCreator<AlertaFormularioSliceType & Au
                 error: payload.error
             }
         });
+      
+    },
 
-        /*
-        setTimeout(() => {
-            set({
+    cerrarAlerta: () => {
+        set({
                 alerta: {
                     mensaje: '',
                     error: false
                 }
             })
-        },5000)
-        */
     }
 })
