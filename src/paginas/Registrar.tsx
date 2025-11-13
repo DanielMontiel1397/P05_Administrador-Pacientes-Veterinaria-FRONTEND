@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import {  Veterinario } from "../types"
+import { Veterinario } from "../types"
 import Alerta from "../components/Alerta";
 import { useAppStore } from "../stores/useAppStore";
 
@@ -9,7 +9,7 @@ export default function Registrar() {
   const registrarVeterinario = useAppStore(state => state.registrarVeterinario);
   const alertaFormulario = useAppStore(state => state.alerta);
   const mostrarAlerta = useAppStore(state => state.mostrarAlerta);
-  
+
   const [veterinario, setVeterinario] = useState<Veterinario>({
     nombre: '',
     email: '',
@@ -62,9 +62,14 @@ export default function Registrar() {
       return;
     }
 
-    registrarVeterinario(veterinario);
-      
-    
+    await registrarVeterinario(veterinario);
+
+    setVeterinario({
+      nombre: '',
+      email: '',
+      password: '',
+      repetirPassword: ''
+    })
     /*
     //Crear el usuario en la API
     try {
