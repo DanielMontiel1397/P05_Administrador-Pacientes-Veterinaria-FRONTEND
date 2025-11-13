@@ -21,6 +21,15 @@ export const alertaFormularioSlice : StateCreator<AlertaFormularioSliceType & Au
                 error: payload.error
             }
         });
+
+        setTimeout(() => {
+            set({
+                alerta: {
+                    mensaje: '',
+                    error: false
+                }
+            })
+        }, 5000);
       
     },
 
