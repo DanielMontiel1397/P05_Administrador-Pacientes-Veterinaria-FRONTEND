@@ -1,7 +1,6 @@
 import {  useState, useEffect } from "react"
 import { PacienteFormulario } from "../types"
 import Alerta from "./Alerta";
-//import { usePacientes } from "../hooks/usePacientes";
 import { useAppStore } from "../stores/useAppStore";
 
 
@@ -23,8 +22,6 @@ export default function Formulario() {
     const pacienteEditar = useAppStore(state => state.pacienteEditar);
     const editarPaciente = useAppStore(state => state.actualizarPaciente)
     const limpiarPacienteEditar = useAppStore(state => state.limpiarPacienteEditar);
-
-    //const {guardarPaciente, paciente: pacienteEditar } = usePacientes()
 
     useEffect(() => {
         if(pacienteEditar?.nombre){
