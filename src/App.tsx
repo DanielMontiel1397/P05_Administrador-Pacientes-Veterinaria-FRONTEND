@@ -13,6 +13,7 @@ import CambiarPassword from "./paginas/CambiarPassword";
 import { useAppStore } from "./stores/useAppStore";
 import { useEffect } from "react";
 import RutaPublica from "./layout/RutaPublica";
+import NoEncontrado from "./components/404";
 
 function App() {
 
@@ -47,6 +48,8 @@ function App() {
                 <Route path="perfil" element={<EditarPerfil/>}/>
                 <Route path="cambiar-password" element={<CambiarPassword/>}/>
               </Route>
+
+              <Route path="*" element={<NoEncontrado/>}/>
 
             </Routes>
 
